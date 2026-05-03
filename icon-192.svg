@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="40" fill="#0f0f14"/>
+  <rect x="16" y="16" width="160" height="160" rx="28" fill="#17171f" stroke="#2a2a38" stroke-width="2"/>
+  <text x="96" y="82" font-family="Georgia,serif" font-size="54" font-weight="bold" fill="#c8f060" text-anchor="middle">₹</text>
+  <rect x="36" y="104" width="120" height="10" rx="5" fill="#2a2a38"/>
+  <rect x="36" y="104" width="80" height="10" rx="5" fill="#c8f060"/>
+  <rect x="36" y="122" width="120" height="10" rx="5" fill="#2a2a38"/>
+  <rect x="36" y="122" width="50" height="10" rx="5" fill="#60c8f0"/>
+  <rect x="36" y="140" width="120" height="10" rx="5" fill="#2a2a38"/>
+  <rect x="36" y="140" width="96" height="10" rx="5" fill="#f060a8"/>
+</svg>
