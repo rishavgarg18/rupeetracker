@@ -4,10 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f0f14">
+<meta name="description" content="Track your monthly bills, credit cards, savings and money owed — all in one place.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Finance">
-<title>Finance Tracker</title>
+<meta name="apple-mobile-web-app-title" content="₹ Tracker">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="₹ Tracker">
+
+<!-- PWA Manifest inline via JS blob — no external file needed -->
+<script>
+(function() {
+  const icon192 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#0f0f14"/><rect x="16" y="16" width="160" height="160" rx="28" fill="#17171f" stroke="#2a2a38" stroke-width="2"/><text x="96" y="80" font-family="Georgia,serif" font-size="52" font-weight="bold" fill="#c8f060" text-anchor="middle">₹</text><rect x="36" y="100" width="120" height="10" rx="5" fill="#2a2a38"/><rect x="36" y="100" width="78" height="10" rx="5" fill="#c8f060"/><rect x="36" y="120" width="120" height="10" rx="5" fill="#2a2a38"/><rect x="36" y="120" width="48" height="10" rx="5" fill="#60c8f0"/><rect x="36" y="140" width="120" height="10" rx="5" fill="#2a2a38"/><rect x="36" y="140" width="96" height="10" rx="5" fill="#f060a8"/></svg>`;
+  const icon512 = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="100" fill="#0f0f14"/><rect x="40" y="40" width="432" height="432" rx="72" fill="#17171f" stroke="#2a2a38" stroke-width="4"/><text x="256" y="220" font-family="Georgia,serif" font-size="148" font-weight="bold" fill="#c8f060" text-anchor="middle">₹</text><rect x="96" y="272" width="320" height="26" rx="13" fill="#2a2a38"/><rect x="96" y="272" width="210" height="26" rx="13" fill="#c8f060"/><rect x="96" y="316" width="320" height="26" rx="13" fill="#2a2a38"/><rect x="96" y="316" width="130" height="26" rx="13" fill="#60c8f0"/><rect x="96" y="360" width="320" height="26" rx="13" fill="#2a2a38"/><rect x="96" y="360" width="258" height="26" rx="13" fill="#f060a8"/></svg>`;
+
+  function svgToDataUrl(svg) {
+    return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+  }
+
+  const manifest = {
+    name: "₹ Tracker — Monthly Finance",
+    short_name: "₹ Tracker",
+    description: "Track bills, credit cards, savings and credits month by month.",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#0f0f14",
+    theme_color: "#0f0f14",
+    orientation: "portrait",
+    categories: ["finance", "productivity"],
+    icons: [
+      { src: svgToDataUrl(icon192), sizes: "192x192", type: "image/svg+xml", purpose: "any maskable" },
+      { src: svgToDataUrl(icon512), sizes: "512x512", type: "image/svg+xml", purpose: "any maskable" }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest'; link.href = url;
+  document.currentScript.parentNode.appendChild(link);
+
+  // Apple touch icon
+  const appleIcon = document.createElement('link');
+  appleIcon.rel = 'apple-touch-icon';
+  appleIcon.href = svgToDataUrl(icon192);
+  document.currentScript.parentNode.appendChild(appleIcon);
+
+  // Favicon
+  const favicon = document.createElement('link');
+  favicon.rel = 'icon'; favicon.type = 'image/svg+xml';
+  favicon.href = svgToDataUrl(icon192);
+  document.currentScript.parentNode.appendChild(favicon);
+})();
+</script>
+
+<title>₹ Tracker — Monthly Finance</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -556,47 +606,7 @@ let editType = null, editId = null, editStatus = 'pending';
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
-// ─── SEED DEFAULT DATA FOR CURRENT MONTH IF EMPTY ────────────────────────────
-function seedIfEmpty() {
-  if (loadData('fixed').length > 0 || loadData('variable').length > 0 || loadData('cc').length > 0) return;
-
-  const fixed = [
-    { id: uid(), name: 'Rent', amount: 21300, status: 'done', note: '' },
-    { id: uid(), name: 'Maid', amount: 2500, status: 'done', note: '' },
-    { id: uid(), name: 'RO', amount: 600, status: 'pending', note: '' },
-    { id: uid(), name: 'Electricity + Maintenance', amount: 5000, status: 'partial', note: '₹1500 left' },
-    { id: uid(), name: 'Wifi', amount: 600, status: 'pending', note: '' },
-    { id: uid(), name: 'Mobile Recharge', amount: 600, status: 'pending', note: '' },
-  ];
-  const variable = [
-    { id: uid(), name: 'Petrol - Bike', amount: 100, status: 'pending', note: '' },
-    { id: uid(), name: 'Petrol - Car', amount: 2000, status: 'pending', note: '' },
-    { id: uid(), name: 'Fasttag Car', amount: 500, status: 'pending', note: '' },
-    { id: uid(), name: 'Food (Yatharath)', amount: 428, status: 'pending', note: '219+99+90+20' },
-    { id: uid(), name: 'Spends (To come back)', amount: 1861, status: 'pending', note: 'Ayush ticket' },
-  ];
-  const cc = [
-    { id: uid(), name: 'Axis Bank My Zone CC', amount: 11287, status: 'done', dueDate: '2026-05-02', recurring: false },
-    { id: uid(), name: 'Axis Bank Flipkart CC', amount: 686, status: 'done', dueDate: '2026-04-30', recurring: false },
-    { id: uid(), name: 'Swiggy CC', amount: 9758, status: 'done', dueDate: '2026-05-02', recurring: true },
-    { id: uid(), name: 'Jupiter CC', amount: 13260, status: 'done', dueDate: '2026-05-01', recurring: false },
-  ];
-  const credits = [
-    { id: uid(), name: 'Ayush Ticket Balance', amount: 1861, note: '' },
-    { id: uid(), name: 'Shubham Previous Tickets', amount: 13500, note: '' },
-    { id: uid(), name: 'Rahul Udhar', amount: 3100, note: '' },
-    { id: uid(), name: 'Dimple Udhar', amount: 3200, note: '' },
-  ];
-  const savings = [
-    { id: uid(), name: 'Mummy Savings', amount: 40000, note: '' },
-  ];
-  saveData('fixed', fixed);
-  saveData('variable', variable);
-  saveData('cc', cc);
-  saveData('credit', credits);
-  saveData('savings', savings);
-  saveBalanceVal(125000);
-}
+// No seed data — every user starts fresh
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 let activeTab = 'bills';
@@ -794,7 +804,6 @@ function openMonthModal() {
 function closeMonthModal() { document.getElementById('monthModal').classList.remove('open'); }
 function selectMonth(key) {
   currentMonth = key;
-  seedIfEmpty();
   closeMonthModal();
   renderAll();
 }
@@ -811,19 +820,31 @@ document.getElementById('balanceModal').addEventListener('click', function(e) {
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-seedIfEmpty();
 renderAll();
 
-// PWA service worker registration
+// PWA service worker — offline cache
 if ('serviceWorker' in navigator) {
   const sw = `
-self.addEventListener('install', e => self.skipWaiting());
-self.addEventListener('activate', e => clients.claim());
-self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+const CACHE = 'rupee-tracker-v1';
+const ASSETS = [self.location.href];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(clients.claim());
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone));
+      return res;
+    }))
+  );
+});
   `;
   const blob = new Blob([sw], {type: 'application/javascript'});
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(()=>{});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
 }
 </script>
 </body>
